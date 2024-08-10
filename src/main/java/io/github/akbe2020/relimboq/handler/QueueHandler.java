@@ -21,14 +21,14 @@ package io.github.akbe2020.relimboq.handler;
 import net.elytrium.limboapi.api.Limbo;
 import net.elytrium.limboapi.api.LimboSessionHandler;
 import net.elytrium.limboapi.api.player.LimboPlayer;
-import io.github.akbe2020.relimboq.LimboQueue;
+import io.github.akbe2020.relimboq.ReLimboQ;
 
 public class QueueHandler implements LimboSessionHandler {
 
-  private final LimboQueue plugin;
+  private final ReLimboQ plugin;
   private LimboPlayer player;
 
-  public QueueHandler(LimboQueue plugin) {
+  public QueueHandler(ReLimboQ plugin) {
     this.plugin = plugin;
   }
 

@@ -22,14 +22,14 @@ import com.velocitypowered.api.event.Subscribe;
 import net.elytrium.commons.kyori.serialization.Serializer;
 import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
 import io.github.akbe2020.relimboq.Config;
-import io.github.akbe2020.relimboq.LimboQueue;
+import io.github.akbe2020.relimboq.ReLimboQ;
 
 public class QueueListener {
 
-  private final LimboQueue plugin;
-  private final Serializer serializer = LimboQueue.getSerializer();
+  private final ReLimboQ plugin;
+  private final Serializer serializer = ReLimboQ.getSerializer();
 
-  public QueueListener(LimboQueue plugin) {
+  public QueueListener(ReLimboQ plugin) {
     this.plugin = plugin;
   }
 

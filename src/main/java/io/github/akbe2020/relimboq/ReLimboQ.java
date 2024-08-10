@@ -54,8 +54,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.slf4j.Logger;
 
-@Plugin(id = "limboqueue", name = "LimboQueue", version = "1.0.1", authors = {"skywatcher_2019", "hevav"})
-public class LimboQueue {
+@Plugin(id = "relimboq", name = "ReLimboQ", version = "0.0.1-SNAPSHOT", authors = {"skywatcher_2019", "hevav", "four4tReS"})
+public class ReLimboQ {
 
   @Inject
   private static Logger LOGGER;
@@ -73,7 +73,7 @@ public class LimboQueue {
   private ScheduledTask pingTask;
 
   @Inject
-  public LimboQueue(Logger logger, ProxyServer server, @DataDirectory Path dataDirectory) {
+  public ReLimboQ(Logger logger, ProxyServer server, @DataDirectory Path dataDirectory) {
     setLogger(logger);
 
     this.server = server;
@@ -116,12 +116,12 @@ public class LimboQueue {
     this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
 
     VirtualWorld queueWorld = this.factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION), 0, 100, 0, (float) 90, (float) 0.0);
-    this.queueServer = this.factory.createLimbo(queueWorld).setName("LimboQueue").setWorldTime(6000);
+    this.queueServer = this.factory.createLimbo(queueWorld).setName("ReLimboQ").setWorldTime(6000);
     this.server.getEventManager().register(this, new QueueListener(this));
 
     CommandManager manager = this.server.getCommandManager();
-    manager.unregister("limboqueue");
-    manager.register("limboqueue", new LimboQueueCommand(this), "lq", "queue");
+    manager.unregister("relimboq");
+    manager.register("relimboq", new LimboQueueCommand(this), "rlq", "queue");
 
     Optional<RegisteredServer> server = this.getServer().getServer(Config.IMP.MAIN.SERVER);
     server.ifPresentOrElse(registeredServer -> {

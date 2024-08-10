@@ -24,18 +24,18 @@ import com.velocitypowered.api.command.SimpleCommand;
 import java.util.List;
 import net.elytrium.commons.kyori.serialization.Serializer;
 import io.github.akbe2020.relimboq.Config;
-import io.github.akbe2020.relimboq.LimboQueue;
+import io.github.akbe2020.relimboq.ReLimboQ;
 import net.kyori.adventure.text.Component;
 
 public class LimboQueueCommand implements SimpleCommand {
 
-  private final LimboQueue plugin;
+  private final ReLimboQ plugin;
   private final Component reload;
   private final Component reloadFailed;
 
-  public LimboQueueCommand(LimboQueue plugin) {
+  public LimboQueueCommand(ReLimboQ plugin) {
     this.plugin = plugin;
-    Serializer serializer = LimboQueue.getSerializer();
+    Serializer serializer = ReLimboQ.getSerializer();
     this.reload = serializer.deserialize(Config.IMP.MESSAGES.RELOAD);
     this.reloadFailed = serializer.deserialize(Config.IMP.MESSAGES.RELOAD_FAILED);
   }
@@ -58,7 +58,7 @@ public class LimboQueueCommand implements SimpleCommand {
 
     if (args.length == 1) {
       String command = args[0];
-      if (command.equalsIgnoreCase("reload") && source.hasPermission("limboqueue.reload")) {
+      if (command.equalsIgnoreCase("reload") && source.hasPermission("relimboq.reload")) {
         try {
           this.plugin.reload();
           source.sendMessage(this.reload);

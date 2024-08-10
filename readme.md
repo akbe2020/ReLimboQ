@@ -4,7 +4,7 @@ ReLimboQ is a fork of discontinued [LimboQueue](https://github.com/Elytrium/Limb
 
 ## Commands and permissions
 ### Admin
-- ***limboqueue.reload* | /lq reload** - Reload Plugin Command
+- ***relimboq.reload* | /rlq reload** - Reload Plugin Command
 ## Requirements
 <ul>
 	<li>Latest Velocity</li>
