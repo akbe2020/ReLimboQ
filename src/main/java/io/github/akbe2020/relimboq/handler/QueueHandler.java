@@ -18,29 +18,29 @@
 
 package io.github.akbe2020.relimboq.handler;
 
+import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.limboapi.api.Limbo;
 import net.elytrium.limboapi.api.LimboSessionHandler;
 import net.elytrium.limboapi.api.player.LimboPlayer;
-import io.github.akbe2020.relimboq.ReLimboQ;
 
 public class QueueHandler implements LimboSessionHandler {
 
-  private final ReLimboQ plugin;
-  private LimboPlayer player;
+    private final ReLimboQ plugin;
+    private LimboPlayer player;
 
-  public QueueHandler(ReLimboQ plugin) {
-    this.plugin = plugin;
-  }
+    public QueueHandler(ReLimboQ plugin) {
+        this.plugin = plugin;
+    }
 
-  @Override
-  public void onSpawn(Limbo server, LimboPlayer player) {
-    this.player = player;
-    this.player.disableFalling();
-    this.plugin.queuedPlayers.add(player);
-  }
+    @Override
+    public void onSpawn(Limbo server, LimboPlayer player) {
+        this.player = player;
+        this.player.disableFalling();
+        this.plugin.queuedPlayers.add(player);
+    }
 
-  @Override
-  public void onDisconnect() {
-    this.plugin.queuedPlayers.remove(this.player);
-  }
+    @Override
+    public void onDisconnect() {
+        this.plugin.queuedPlayers.remove(this.player);
+    }
 }

@@ -19,37 +19,37 @@
 package io.github.akbe2020.relimboq.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import net.elytrium.commons.kyori.serialization.Serializer;
-import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
 import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
+import net.elytrium.commons.kyori.serialization.Serializer;
+import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
 
 public class QueueListener {
 
-  private final ReLimboQ plugin;
-  private final Serializer serializer = ReLimboQ.getSerializer();
+    private final ReLimboQ plugin;
+    private final Serializer serializer = ReLimboQ.getSerializer();
 
-  public QueueListener(ReLimboQ plugin) {
-    this.plugin = plugin;
-  }
+    public QueueListener(ReLimboQ plugin) {
+        this.plugin = plugin;
+    }
 
-  @Subscribe
-  public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
-    event.setOnKickCallback((kickEvent) -> {
-      if (!kickEvent.getServer().equals(this.plugin.targetServer)) {
-        return false;
-      }
+    @Subscribe
+    public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
+        event.setOnKickCallback((kickEvent) -> {
+            if (!kickEvent.getServer().equals(this.plugin.getTargetServer())) {
+                return false;
+            }
 
-      if (kickEvent.getServerKickReason().isEmpty()) {
-        return false;
-      }
+            if (kickEvent.getServerKickReason().isEmpty()) {
+                return false;
+            }
 
-      String reason = this.serializer.serialize(kickEvent.getServerKickReason().get());
-      if (reason.contains(Config.IMP.MAIN.KICK_MESSAGE)) {
-        this.plugin.queuePlayer(kickEvent.getPlayer());
-        return true;
-      }
-      return false;
-    });
-  }
+            String reason = this.serializer.serialize(kickEvent.getServerKickReason().get());
+            if (reason.contains(Config.IMP.MAIN.KICK_MESSAGE)) {
+                this.plugin.queuePlayer(kickEvent.getPlayer());
+                return true;
+            }
+            return false;
+        });
+    }
 }

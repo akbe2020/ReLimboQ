@@ -21,52 +21,53 @@ package io.github.akbe2020.relimboq.commands;
 import com.google.common.collect.ImmutableList;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import java.util.List;
-import net.elytrium.commons.kyori.serialization.Serializer;
 import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
+import net.elytrium.commons.kyori.serialization.Serializer;
 import net.kyori.adventure.text.Component;
+
+import java.util.List;
 
 public class LimboQueueCommand implements SimpleCommand {
 
-  private final ReLimboQ plugin;
-  private final Component reload;
-  private final Component reloadFailed;
+    private final ReLimboQ plugin;
+    private final Component reload;
+    private final Component reloadFailed;
 
-  public LimboQueueCommand(ReLimboQ plugin) {
-    this.plugin = plugin;
-    Serializer serializer = ReLimboQ.getSerializer();
-    this.reload = serializer.deserialize(Config.IMP.MESSAGES.RELOAD);
-    this.reloadFailed = serializer.deserialize(Config.IMP.MESSAGES.RELOAD_FAILED);
-  }
-
-  @Override
-  public List<String> suggest(Invocation invocation) {
-    String[] args = invocation.arguments();
-
-    if (args.length == 0) {
-      return ImmutableList.of("reload");
-    } else {
-      return ImmutableList.of();
+    public LimboQueueCommand(ReLimboQ plugin) {
+        this.plugin = plugin;
+        Serializer serializer = ReLimboQ.getSerializer();
+        this.reload = serializer.deserialize(Config.IMP.MESSAGES.RELOAD);
+        this.reloadFailed = serializer.deserialize(Config.IMP.MESSAGES.RELOAD_FAILED);
     }
-  }
 
-  @Override
-  public void execute(Invocation invocation) {
-    CommandSource source = invocation.source();
-    String[] args = invocation.arguments();
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        String[] args = invocation.arguments();
 
-    if (args.length == 1) {
-      String command = args[0];
-      if (command.equalsIgnoreCase("reload") && source.hasPermission("relimboq.reload")) {
-        try {
-          this.plugin.reload();
-          source.sendMessage(this.reload);
-        } catch (Exception e) {
-          e.printStackTrace();
-          source.sendMessage(this.reloadFailed);
+        if (args.length == 0) {
+            return ImmutableList.of("reload");
+        } else {
+            return ImmutableList.of();
         }
-      }
     }
-  }
+
+    @Override
+    public void execute(Invocation invocation) {
+        CommandSource source = invocation.source();
+        String[] args = invocation.arguments();
+
+        if (args.length == 1) {
+            String command = args[0];
+            if (command.equalsIgnoreCase("reload") && source.hasPermission("relimboq.reload")) {
+                try {
+                    this.plugin.reload();
+                    source.sendMessage(this.reload);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    source.sendMessage(this.reloadFailed);
+                }
+            }
+        }
+    }
 }
