@@ -30,7 +30,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import io.github.akbe2020.relimboq.commands.LimboQueueCommand;
+import io.github.akbe2020.relimboq.commands.ReLimboQCommand;
 import io.github.akbe2020.relimboq.handler.QueueHandler;
 import io.github.akbe2020.relimboq.listener.QueueListener;
 import net.elytrium.commons.kyori.serialization.Serializer;
@@ -122,7 +122,7 @@ public class ReLimboQ {
 
         CommandManager manager = this.server.getCommandManager();
         manager.unregister("relimboq");
-        manager.register("relimboq", new LimboQueueCommand(this), "rlq", "queue");
+        manager.register("relimboq", new ReLimboQCommand(this), "rlq", "queue");
 
         Optional<RegisteredServer> server = this.getServer().getServer(Config.IMP.MAIN.SERVER);
         server.ifPresentOrElse(registeredServer -> {

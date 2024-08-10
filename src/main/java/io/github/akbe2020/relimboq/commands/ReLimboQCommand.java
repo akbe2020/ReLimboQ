@@ -28,13 +28,13 @@ import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
-public class LimboQueueCommand implements SimpleCommand {
+public class ReLimboQCommand implements SimpleCommand {
 
     private final ReLimboQ plugin;
     private final Component reload;
     private final Component reloadFailed;
 
-    public LimboQueueCommand(ReLimboQ plugin) {
+    public ReLimboQCommand(ReLimboQ plugin) {
         this.plugin = plugin;
         Serializer serializer = ReLimboQ.getSerializer();
         this.reload = serializer.deserialize(Config.IMP.MESSAGES.RELOAD);
