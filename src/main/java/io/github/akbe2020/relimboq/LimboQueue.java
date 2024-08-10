@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 four4tReS
  * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.elytrium.limboqueue;
+package io.github.akbe2020.relimboq;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
@@ -46,9 +47,9 @@ import net.elytrium.limboapi.api.LimboFactory;
 import net.elytrium.limboapi.api.chunk.Dimension;
 import net.elytrium.limboapi.api.chunk.VirtualWorld;
 import net.elytrium.limboapi.api.player.LimboPlayer;
-import net.elytrium.limboqueue.commands.LimboQueueCommand;
-import net.elytrium.limboqueue.handler.QueueHandler;
-import net.elytrium.limboqueue.listener.QueueListener;
+import io.github.akbe2020.relimboq.commands.LimboQueueCommand;
+import io.github.akbe2020.relimboq.handler.QueueHandler;
+import io.github.akbe2020.relimboq.listener.QueueListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.slf4j.Logger;

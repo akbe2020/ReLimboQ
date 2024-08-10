@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 four4tReS
  * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.elytrium.limboqueue.listener;
+package io.github.akbe2020.relimboq.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import net.elytrium.commons.kyori.serialization.Serializer;
 import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
-import net.elytrium.limboqueue.Config;
-import net.elytrium.limboqueue.LimboQueue;
+import io.github.akbe2020.relimboq.Config;
+import io.github.akbe2020.relimboq.LimboQueue;
 
 public class QueueListener {
 

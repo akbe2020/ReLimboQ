@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 four4tReS
  * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.elytrium.limboqueue;
+package io.github.akbe2020.relimboq;
 
 import net.elytrium.commons.config.YamlConfig;
 

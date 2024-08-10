@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 four4tReS
  * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.elytrium.limboqueue.commands;
+package io.github.akbe2020.relimboq.commands;
 
 import com.google.common.collect.ImmutableList;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import java.util.List;
 import net.elytrium.commons.kyori.serialization.Serializer;
-import net.elytrium.limboqueue.Config;
-import net.elytrium.limboqueue.LimboQueue;
+import io.github.akbe2020.relimboq.Config;
+import io.github.akbe2020.relimboq.LimboQueue;
 import net.kyori.adventure.text.Component;
 
 public class LimboQueueCommand implements SimpleCommand {
