@@ -66,9 +66,10 @@ public class ReLimboQ {
     private final LimboFactory factory;
     public LinkedList<LimboPlayer> queuedPlayers = new LinkedList<>();
     private RegisteredServer targetServer;
-    private boolean isFull = false;
+    private ServerStatus serverStatus = ServerStatus.NORMAL;
     private Limbo queueServer;
     private String queueMessage;
+    private String serverOfflineMessage;
     private int checkInterval;
     private ScheduledTask queueTask;
     private ScheduledTask pingTask;
@@ -114,6 +115,7 @@ public class ReLimboQ {
         }
 
         this.queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
+        this.serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
         this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
 
         VirtualWorld queueWorld = this.factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION), 0, 100, 0, (float) 90, (float) 0.0);
@@ -149,13 +151,20 @@ public class ReLimboQ {
             this.queueTask.cancel();
         }
         this.queueTask = this.getServer().getScheduler().buildTask(this, () -> {
-            if (!this.isFull && this.queuedPlayers.size() > 0) {
-                LimboPlayer limboPlayer = this.queuedPlayers.getFirst();
-                limboPlayer.disconnect();
-            } else {
-                AtomicInteger i = new AtomicInteger(0);
-                this.queuedPlayers.forEach(
-                        (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(this.queueMessage, i.incrementAndGet()))));
+            switch (this.serverStatus) {
+                case NORMAL -> {
+                    if (!this.queuedPlayers.isEmpty()) {
+                        this.queuedPlayers.getFirst().disconnect();
+                    }
+                }
+                case FULL -> {
+                    AtomicInteger i = new AtomicInteger(0);
+                    this.queuedPlayers.forEach(
+                            (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(this.queueMessage, i.incrementAndGet()))));
+                }
+                case OFFLINE -> {
+                    this.queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.serverOfflineMessage)));
+                }
             }
         }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
     }
@@ -169,11 +178,19 @@ public class ReLimboQ {
                 ServerPing serverPing = this.targetServer.ping().get();
                 if (serverPing.getPlayers().isPresent()) {
                     ServerPing.Players players = serverPing.getPlayers().get();
-                    this.isFull = players.getOnline() >= players.getMax();
+                    if (players.getOnline() >= players.getMax()) {
+                        this.serverStatus = ServerStatus.FULL;
+                    }
                 }
             } catch (InterruptedException | ExecutionException ignored) {
-                this.isFull = true;
+                this.serverStatus = ServerStatus.OFFLINE;
             }
         }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
+    }
+
+    enum ServerStatus {
+        NORMAL,
+        FULL,
+        OFFLINE
     }
 }

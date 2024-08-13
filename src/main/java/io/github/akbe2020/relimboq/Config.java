@@ -55,6 +55,7 @@ public class Config extends YamlConfig {
     public static class MESSAGES {
 
         public String QUEUE_MESSAGE = "Your position in queue: {0}";
+        public String SERVER_OFFLINE = "<red>Server is offline!";
         public String RELOAD = "<green>ReLimboQ reloaded!";
         public String RELOAD_FAILED = "<red>Reload failed!";
     }
