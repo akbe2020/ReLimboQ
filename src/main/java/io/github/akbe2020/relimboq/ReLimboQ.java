@@ -55,7 +55,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Plugin(id = "relimboq", name = "ReLimboQ", version = "0.0.1", authors = {"skywatcher_2019", "hevav", "four4tReS"})
+@Plugin(id = "relimboq", name = "ReLimboQ", version = "0.0.2", authors = {"skywatcher_2019", "hevav", "four4tReS"})
 public class ReLimboQ {
 
     @Inject
