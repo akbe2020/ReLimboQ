@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -55,9 +56,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Plugin(id = "relimboq", name = "ReLimboQ", version = "0.0.2", authors = {"skywatcher_2019", "hevav", "four4tReS"})
+@Plugin(
+        id = "relimboq",
+        name = "ReLimboQ",
+        version = "0.0.2",
+        authors = {
+                "four4tReS"
+        },
+        dependencies = {
+                @Dependency(id = "limboapi")
+        }
+)
 public class ReLimboQ {
-
     @Inject
     private static Logger LOGGER;
     private static Serializer SERIALIZER;
@@ -142,7 +152,6 @@ public class ReLimboQ {
             exaroton = new Exaroton(Config.IMP.EXAROTON.TOKEN, Config.IMP.EXAROTON.SERVER_ID);
         }
     }
-
 
     public boolean isAlwaysPutToQueue() {
         return alwaysPutToQueue;

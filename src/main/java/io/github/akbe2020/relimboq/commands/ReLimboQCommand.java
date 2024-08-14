@@ -29,7 +29,6 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 
 public class ReLimboQCommand implements SimpleCommand {
-
     private final ReLimboQ plugin;
     private final Component reload;
     private final Component reloadFailed;

@@ -21,7 +21,6 @@ package io.github.akbe2020.relimboq;
 import net.elytrium.commons.config.YamlConfig;
 
 public class Config extends YamlConfig {
-
     @Ignore
     public static final Config IMP = new Config();
 
@@ -33,7 +32,6 @@ public class Config extends YamlConfig {
     public EXAROTON EXAROTON;
 
     public static class MAIN {
-
         @Comment("Serializers: LEGACY_AMPERSAND, LEGACY_SECTION, MINIMESSAGE")
         public String SERIALIZER = "MINIMESSAGE";
         @Comment("Server from velocity.toml which will checked for online")
@@ -49,7 +47,6 @@ public class Config extends YamlConfig {
         public Config.MAIN.WORLD WORLD;
 
         public static class WORLD {
-
             @Comment("Dimensions: OVERWORLD, NETHER, THE_END")
             public String DIMENSION = "OVERWORLD";
         }
@@ -57,7 +54,6 @@ public class Config extends YamlConfig {
     }
 
     public static class MESSAGES {
-
         public String QUEUE_MESSAGE = "Your position in queue: {0}";
         public String SERVER_OFFLINE = "<red>Server is offline!";
         public String RELOAD = "<green>ReLimboQ reloaded!";

@@ -24,7 +24,6 @@ import net.elytrium.limboapi.api.LimboSessionHandler;
 import net.elytrium.limboapi.api.player.LimboPlayer;
 
 public class QueueHandler implements LimboSessionHandler {
-
     private final ReLimboQ plugin;
     private LimboPlayer player;
 

@@ -27,7 +27,6 @@ import net.elytrium.commons.kyori.serialization.Serializer;
 import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
 
 public class QueueListener {
-
     private final ReLimboQ plugin;
     private final Serializer serializer = ReLimboQ.getSerializer();
 
