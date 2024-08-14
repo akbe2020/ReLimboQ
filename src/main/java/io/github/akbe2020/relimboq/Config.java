@@ -29,6 +29,8 @@ public class Config extends YamlConfig {
     public MAIN MAIN;
     @Create
     public MESSAGES MESSAGES;
+    @Create
+    public EXAROTON EXAROTON;
 
     public static class MAIN {
 
@@ -36,6 +38,8 @@ public class Config extends YamlConfig {
         public String SERIALIZER = "MINIMESSAGE";
         @Comment("Server from velocity.toml which will checked for online")
         public String SERVER = "survival";
+        @Comment("Ignores kick_message and puts the player in the queue even if they have not been kicked by the server")
+        public boolean ALWAYS_PUT_TO_QUEUE = true;
         @Comment("Send player to the queue if kick reason contains this text (like \"The server if full!\")")
         public String KICK_MESSAGE = "The server is full";
         @Comment("Server checking interval in seconds")
@@ -58,5 +62,14 @@ public class Config extends YamlConfig {
         public String SERVER_OFFLINE = "<red>Server is offline!";
         public String RELOAD = "<green>ReLimboQ reloaded!";
         public String RELOAD_FAILED = "<red>Reload failed!";
+    }
+
+    public static class EXAROTON {
+        @Comment("Enables Exaroton hosting integration")
+        public boolean ENABLED = false;
+        @Comment("Your Exaroton API token can be found at: https://exaroton.com/account/")
+        public String TOKEN = "example-api-token";
+        @Comment("Your Exaroton server ID can be found on the server page")
+        public String SERVER_ID = "example-server-id";
     }
 }

@@ -18,7 +18,9 @@
 
 package io.github.akbe2020.relimboq.listener;
 
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.proxy.Player;
 import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.commons.kyori.serialization.Serializer;
@@ -33,8 +35,20 @@ public class QueueListener {
         this.plugin = plugin;
     }
 
+    @Subscribe(order = PostOrder.LAST)
+    public void onLogin(LoginLimboRegisterEvent event) {
+        if (this.plugin.isAlwaysPutToQueue()) {
+            Player player = event.getPlayer();
+            event.addOnJoinCallback(() -> this.plugin.queuePlayer(player));
+        }
+    }
+
     @Subscribe
     public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
+        if (this.plugin.isAlwaysPutToQueue()) {
+            return;
+        }
+
         event.setOnKickCallback((kickEvent) -> {
             if (!kickEvent.getServer().equals(this.plugin.getTargetServer())) {
                 return false;

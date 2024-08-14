@@ -68,11 +68,14 @@ public class ReLimboQ {
     private RegisteredServer targetServer;
     private ServerStatus serverStatus = ServerStatus.NORMAL;
     private Limbo queueServer;
+    private boolean alwaysPutToQueue;
     private String queueMessage;
     private String serverOfflineMessage;
     private int checkInterval;
     private ScheduledTask queueTask;
     private ScheduledTask pingTask;
+    private Exaroton exaroton;
+    private boolean exarotonEnabled;
 
     @Inject
     public ReLimboQ(Logger logger, ProxyServer server, @DataDirectory Path dataDirectory) {
@@ -115,6 +118,7 @@ public class ReLimboQ {
         }
 
         this.queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
+        this.alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
         this.serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
         this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
 
@@ -132,6 +136,16 @@ public class ReLimboQ {
             this.startPingTask();
             this.startQueueTask();
         }, () -> LOGGER.error("Server " + Config.IMP.MAIN.SERVER + " doesn't exists!"));
+
+        this.exarotonEnabled = Config.IMP.EXAROTON.ENABLED;
+        if (this.exarotonEnabled) {
+            exaroton = new Exaroton(Config.IMP.EXAROTON.TOKEN, Config.IMP.EXAROTON.SERVER_ID);
+        }
+    }
+
+
+    public boolean isAlwaysPutToQueue() {
+        return alwaysPutToQueue;
     }
 
     public void queuePlayer(Player player) {
@@ -180,10 +194,18 @@ public class ReLimboQ {
                     ServerPing.Players players = serverPing.getPlayers().get();
                     if (players.getOnline() >= players.getMax()) {
                         this.serverStatus = ServerStatus.FULL;
+                    } else {
+                        this.serverStatus = ServerStatus.NORMAL;
                     }
                 }
             } catch (InterruptedException | ExecutionException ignored) {
                 this.serverStatus = ServerStatus.OFFLINE;
+            }
+
+            if (this.exarotonEnabled) {
+                if (exaroton.isOffline()) {
+                    this.serverStatus = ServerStatus.OFFLINE;
+                }
             }
         }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
     }
