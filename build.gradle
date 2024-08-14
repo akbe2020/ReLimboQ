@@ -1,7 +1,6 @@
 plugins {
     id("java")
     id("com.github.spotbugs").version("6.0.20")
-    id("org.cadixdev.licenser").version("0.6.1")
     id("com.github.johnrengelman.shadow").version("8.1.1")
 }
 
@@ -45,10 +44,6 @@ shadowJar {
     relocate("net.elytrium.commons.velocity", "net.elytrium.limboapi.thirdparty.commons.velocity")
     relocate("net.elytrium.commons.kyori", "net.elytrium.limboapi.thirdparty.commons.kyori")
     relocate("net.elytrium.commons.config", "net.elytrium.limboapi.thirdparty.commons.config")
-}
-
-license {
-    setHeader(file("HEADER.txt"))
 }
 
 spotbugsMain {
