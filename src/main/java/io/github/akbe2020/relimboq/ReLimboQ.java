@@ -40,6 +40,7 @@ import net.elytrium.limboapi.api.Limbo;
 import net.elytrium.limboapi.api.LimboFactory;
 import net.elytrium.limboapi.api.chunk.Dimension;
 import net.elytrium.limboapi.api.chunk.VirtualWorld;
+import net.elytrium.limboapi.api.player.GameMode;
 import net.elytrium.limboapi.api.player.LimboPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -132,8 +133,20 @@ public class ReLimboQ {
         this.serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
         this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
 
-        VirtualWorld queueWorld = this.factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION), 0, 100, 0, (float) 90, (float) 0.0);
-        this.queueServer = this.factory.createLimbo(queueWorld).setName("ReLimboQ").setWorldTime(6000);
+        VirtualWorld queueWorld = this.factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION),
+                Config.IMP.MAIN.WORLD.X,
+                Config.IMP.MAIN.WORLD.Y,
+                Config.IMP.MAIN.WORLD.Z,
+                Config.IMP.MAIN.WORLD.YAW,
+                Config.IMP.MAIN.WORLD.PITCH
+        );
+
+        this.queueServer = this.factory.createLimbo(queueWorld)
+                .setName(Config.IMP.MAIN.WORLD.NAME)
+                .setWorldTime(Config.IMP.MAIN.WORLD.WORLDTIME).
+                setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
+                .setViewDistance(Config.IMP.MAIN.WORLD.VIEWDISTANCE)
+                .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATIONDISTANCE);
         this.server.getEventManager().register(this, new QueueListener(this));
 
         CommandManager manager = this.server.getCommandManager();

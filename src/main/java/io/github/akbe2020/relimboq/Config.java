@@ -47,10 +47,29 @@ public class Config extends YamlConfig {
         public Config.MAIN.WORLD WORLD;
 
         public static class WORLD {
+            @Comment("The name of Limbo appears on the f3 screen")
+            public String NAME = "ReLimboQ";
+
+            @Comment("Spawn x coordinate")
+            public double X = 0;
+            @Comment("Spawn y coordinate")
+            public double Y = 100;
+            @Comment("Spawn z coordinate")
+            public double Z = 0;
+            @Comment("Spawn rotation (yaw)")
+            public float YAW = 90.0f;
+            @Comment("Spawn rotation (pitch)")
+            public float PITCH = 0.0f;
+
             @Comment("Dimensions: OVERWORLD, NETHER, THE_END")
             public String DIMENSION = "OVERWORLD";
+            @Comment("DAY - 1000, NOON - 6000, SUNSET - 12000, NIGHT - 13000, MIDNIGHT - 18000, SUNRISE - 23000")
+            public long WORLDTIME = 6000;
+            @Comment("Gamemodes: survival, adventure, spectator, creative")
+            public String GAMEMODE = "spectator";
+            public int VIEWDISTANCE = 2;
+            public int SIMULATIONDISTANCE = 2;
         }
-
     }
 
     public static class MESSAGES {
