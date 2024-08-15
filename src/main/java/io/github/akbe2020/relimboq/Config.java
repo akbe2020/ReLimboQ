@@ -65,8 +65,8 @@ public class Config extends YamlConfig {
             public String DIMENSION = "OVERWORLD";
             @Comment("DAY - 1000, NOON - 6000, SUNSET - 12000, NIGHT - 13000, MIDNIGHT - 18000, SUNRISE - 23000")
             public long WORLDTIME = 6000;
-            @Comment("Gamemodes: survival, adventure, spectator, creative")
-            public String GAMEMODE = "spectator";
+            @Comment("Gamemodes: SURVIVAL, ADVENTURE, SPECTATOR, CREATIVE")
+            public String GAMEMODE = "SPECTATOR";
             public int VIEWDISTANCE = 2;
             public int SIMULATIONDISTANCE = 2;
         }

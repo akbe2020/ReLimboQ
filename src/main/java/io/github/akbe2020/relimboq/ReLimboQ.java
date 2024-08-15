@@ -60,7 +60,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Plugin(
         id = "relimboq",
         name = "ReLimboQ",
-        version = "0.1.0",
+        version = "0.1.1",
         authors = {
                 "four4tReS"
         },

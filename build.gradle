@@ -5,7 +5,7 @@ plugins {
 }
 
 setGroup("io.github.akbe2020")
-setVersion("0.1.0")
+setVersion("0.1.1")
 
 compileJava {
     getOptions().setEncoding("UTF-8")
