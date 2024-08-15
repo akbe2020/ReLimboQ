@@ -30,6 +30,6 @@ public class Exaroton {
     }
 
     public boolean isOffline() {
-        return server.getStatus() != ServerStatus.ONLINE;
+        return !server.hasStatus(ServerStatus.ONLINE);
     }
 }
