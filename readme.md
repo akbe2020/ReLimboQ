@@ -6,7 +6,7 @@ The server is full, and players are waiting, but it doesn’t have to be frustra
 This plugin does one thing and does it well: it queues players efficiently. When your server reaches its capacity, players are placed in a queue and temporarily moved to a lightweight, minimal environment.
 
 ## Features
-- [x] Exaroton hosting integration
+- [x] [Exaroton hosting](https://exaroton.com) integration
 
 ## Important
 ReLimboQ is a fork of discontinued [LimboQueue](https://modrinth.com/plugin/limboqueue).
