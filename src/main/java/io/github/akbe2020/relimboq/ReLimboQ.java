@@ -144,10 +144,10 @@ public class ReLimboQ {
 
         this.queueServer = this.factory.createLimbo(queueWorld)
                 .setName(Config.IMP.MAIN.WORLD.NAME)
-                .setWorldTime(Config.IMP.MAIN.WORLD.WORLDTIME).
+                .setWorldTime(Config.IMP.MAIN.WORLD.WORLD_TIME).
                 setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
-                .setViewDistance(Config.IMP.MAIN.WORLD.VIEWDISTANCE)
-                .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATIONDISTANCE);
+                .setViewDistance(Config.IMP.MAIN.WORLD.VIEW_DISTANCE)
+                .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATION_DISTANCE);
         this.server.getEventManager().register(this, new QueueListener(this));
 
         CommandManager manager = this.server.getCommandManager();

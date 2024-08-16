@@ -64,11 +64,11 @@ public class Config extends YamlConfig {
             @Comment("Dimensions: OVERWORLD, NETHER, THE_END")
             public String DIMENSION = "OVERWORLD";
             @Comment("DAY - 1000, NOON - 6000, SUNSET - 12000, NIGHT - 13000, MIDNIGHT - 18000, SUNRISE - 23000")
-            public long WORLDTIME = 6000;
+            public long WORLD_TIME = 6000;
             @Comment("Gamemodes: SURVIVAL, ADVENTURE, SPECTATOR, CREATIVE")
             public String GAMEMODE = "SPECTATOR";
-            public int VIEWDISTANCE = 2;
-            public int SIMULATIONDISTANCE = 2;
+            public int VIEW_DISTANCE = 2;
+            public int SIMULATION_DISTANCE = 2;
         }
     }
 
@@ -85,6 +85,6 @@ public class Config extends YamlConfig {
         @Comment("Your Exaroton API token can be found at: https://exaroton.com/account/")
         public String TOKEN = "example-api-token";
         @Comment("Your Exaroton server address can be found on the server page")
-        public String ADDRESS = "example.exaroton.com";
+        public String ADDRESS = "example.exaroton.me";
     }
 }
