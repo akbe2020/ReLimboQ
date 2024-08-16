@@ -22,7 +22,7 @@ import com.exaroton.api.ExarotonClient;
 import com.exaroton.api.server.Server;
 import com.exaroton.api.server.ServerStatus;
 
-public class Exaroton {
+public final class Exaroton {
     private final Server server;
     private final String address;
 
