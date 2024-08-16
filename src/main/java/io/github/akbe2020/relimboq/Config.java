@@ -84,7 +84,7 @@ public class Config extends YamlConfig {
         public boolean ENABLED = false;
         @Comment("Your Exaroton API token can be found at: https://exaroton.com/account/")
         public String TOKEN = "example-api-token";
-        @Comment("Your Exaroton server ID can be found on the server page")
-        public String SERVER_ID = "example-server-id";
+        @Comment("Your Exaroton server address can be found on the server page")
+        public String ADDRESS = "example.exaroton.com";
     }
 }

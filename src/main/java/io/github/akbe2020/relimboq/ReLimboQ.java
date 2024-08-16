@@ -18,6 +18,7 @@
 
 package io.github.akbe2020.relimboq;
 
+import com.exaroton.api.APIException;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
@@ -113,11 +114,11 @@ public class ReLimboQ {
     }
 
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
+    public void onProxyInitialization(ProxyInitializeEvent event) throws APIException {
         this.reload();
     }
 
-    public void reload() {
+    public void reload() throws APIException {
         Config.IMP.reload(this.configFile);
         ComponentSerializer<Component, Component, String> serializer = Serializers.valueOf(Config.IMP.MAIN.SERIALIZER.toUpperCase(Locale.ROOT))
                 .getSerializer();
@@ -162,7 +163,7 @@ public class ReLimboQ {
 
         this.exarotonEnabled = Config.IMP.EXAROTON.ENABLED;
         if (this.exarotonEnabled) {
-            exaroton = new Exaroton(Config.IMP.EXAROTON.TOKEN, Config.IMP.EXAROTON.SERVER_ID);
+            exaroton = new Exaroton(Config.IMP.EXAROTON.TOKEN, Config.IMP.EXAROTON.ADDRESS);
         }
     }
 

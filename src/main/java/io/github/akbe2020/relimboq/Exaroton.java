@@ -17,19 +17,31 @@
 
 package io.github.akbe2020.relimboq;
 
+import com.exaroton.api.APIException;
 import com.exaroton.api.ExarotonClient;
 import com.exaroton.api.server.Server;
 import com.exaroton.api.server.ServerStatus;
 
 public class Exaroton {
     private final Server server;
+    private final String address;
 
-    public Exaroton(String token, String serverID) {
-        ExarotonClient client = new ExarotonClient(token);
-        server = client.getServer(serverID);
+    public Exaroton(String token, String address) throws APIException {
+        this.address = address;
+        this.server = bruteforceServerArray(new ExarotonClient(token).getServers());
     }
 
     public boolean isOffline() {
         return !server.hasStatus(ServerStatus.ONLINE);
+    }
+
+    private Server bruteforceServerArray(Server[] servers) {
+        for (Server server : servers) {
+            if (server.getAddress().equals(address)) {
+                return server;
+            }
+        }
+
+        return null;
     }
 }
