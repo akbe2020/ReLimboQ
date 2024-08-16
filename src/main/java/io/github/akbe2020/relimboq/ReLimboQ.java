@@ -82,6 +82,7 @@ public class ReLimboQ {
     private Limbo queueServer;
     private boolean alwaysPutToQueue;
     private String queueMessage;
+    private String connectingMessage;
     private String serverOfflineMessage;
     private int checkInterval;
     private ScheduledTask queueTask;
@@ -130,6 +131,7 @@ public class ReLimboQ {
         }
 
         this.queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
+        this.connectingMessage = Config.IMP.MESSAGES.CONNECTING_MESSAGE;
         this.alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
         this.serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
         this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
@@ -191,7 +193,9 @@ public class ReLimboQ {
             switch (this.serverStatus) {
                 case NORMAL -> {
                     if (!this.queuedPlayers.isEmpty()) {
-                        this.queuedPlayers.getFirst().disconnect();
+                        LimboPlayer player = this.queuedPlayers.getFirst();
+                        player.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.connectingMessage));
+                        player.disconnect();
                     }
                 }
                 case FULL -> {
