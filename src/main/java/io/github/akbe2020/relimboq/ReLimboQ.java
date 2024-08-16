@@ -199,9 +199,7 @@ public class ReLimboQ {
                     this.queuedPlayers.forEach(
                             (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(this.queueMessage, i.incrementAndGet()))));
                 }
-                case OFFLINE -> {
-                    this.queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.serverOfflineMessage)));
-                }
+                case OFFLINE -> this.queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.serverOfflineMessage)));
             }
         }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
     }
