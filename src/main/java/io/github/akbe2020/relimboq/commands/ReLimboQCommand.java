@@ -46,9 +46,9 @@ public class ReLimboQCommand implements SimpleCommand {
 
         if (args.length == 0) {
             return ImmutableList.of("reload");
-        } else {
-            return ImmutableList.of();
         }
+
+        return ImmutableList.of();
     }
 
     @Override
@@ -58,7 +58,11 @@ public class ReLimboQCommand implements SimpleCommand {
 
         if (args.length == 1) {
             String command = args[0];
-            if (command.equalsIgnoreCase("reload") && source.hasPermission("relimboq.reload")) {
+            if (command.equals("reload")) {
+                if (!source.hasPermission("relimboq.reload")) {
+                    return;
+                }
+
                 try {
                     this.plugin.reload();
                     source.sendMessage(this.reload);
