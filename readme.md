@@ -1,5 +1,7 @@
 # ReLimboQ
 
+![Modrinth Downloads](https://img.shields.io/modrinth/dt/HSl92bnZ?style=for-the-badge&logo=modrinth&label=Modrinth%20Downloads&link=https%3A%2F%2Fmodrinth.com%2Fplugin%2Frelimboq)
+
 ## What is this?
 The server is full, and players are waiting, but it doesn’t have to be frustrating. With the ReLimboQ plugin, powered by [LimboAPI](https://github.com/Elytrium/LimboAPI), players can wait seamlessly without ever feeling disconnected.
 
