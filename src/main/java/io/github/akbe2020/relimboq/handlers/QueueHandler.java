@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.akbe2020.relimboq.handler;
+package io.github.akbe2020.relimboq.handlers;
 
 import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.limboapi.api.Limbo;
