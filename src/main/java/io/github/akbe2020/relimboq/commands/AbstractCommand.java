@@ -25,12 +25,12 @@ import net.elytrium.commons.kyori.serialization.Serializer;
 
 import java.util.List;
 
-public abstract class Command implements SimpleCommand {
+public abstract class AbstractCommand implements SimpleCommand {
     private final ReLimboQ plugin;
     private final Serializer serializer;
     private final String slug;
 
-    public Command(ReLimboQ plugin, String slug) {
+    public AbstractCommand(ReLimboQ plugin, String slug) {
         this.plugin = plugin;
         this.serializer = ReLimboQ.getSerializer();
         this.slug = slug;

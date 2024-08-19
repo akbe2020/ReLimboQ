@@ -21,7 +21,7 @@ import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.commons.kyori.serialization.Serializer;
 
-public class Reload extends Command {
+public class Reload extends AbstractCommand {
     private final ReLimboQ plugin = getPlugin();
     private final Serializer serializer = getSerializer();
 
