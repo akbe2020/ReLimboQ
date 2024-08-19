@@ -40,7 +40,6 @@ import net.elytrium.commons.kyori.serialization.Serializers;
 import net.elytrium.limboapi.api.Limbo;
 import net.elytrium.limboapi.api.LimboFactory;
 import net.elytrium.limboapi.api.chunk.Dimension;
-import net.elytrium.limboapi.api.chunk.VirtualWorld;
 import net.elytrium.limboapi.api.player.GameMode;
 import net.elytrium.limboapi.api.player.LimboPlayer;
 import net.kyori.adventure.text.Component;
@@ -79,13 +78,13 @@ public class ReLimboQ {
     private final LimboFactory factory;
     public LinkedList<LimboPlayer> queuedPlayers = new LinkedList<>();
     private RegisteredServer targetServer;
-    private ServerStatus serverStatus = ServerStatus.NORMAL;
+    private ServerStatus serverStatus;
     private Limbo queueServer;
-    private boolean alwaysPutToQueue;
     private String queueMessage;
-    private String connectingMessage;
-    private String serverOfflineMessage;
+    private Component connectingMessage;
+    private Component serverOfflineMessage;
     private int checkInterval;
+    private boolean alwaysPutToQueue;
     private ScheduledTask queueTask;
     private ScheduledTask pingTask;
     private Exaroton exaroton;
@@ -132,25 +131,12 @@ public class ReLimboQ {
         }
 
         queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
-        connectingMessage = Config.IMP.MESSAGES.CONNECTING_MESSAGE;
-        alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
-        serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
+        connectingMessage = SERIALIZER.deserialize(Config.IMP.MESSAGES.CONNECTING_MESSAGE);
+        serverOfflineMessage = SERIALIZER.deserialize(Config.IMP.MESSAGES.SERVER_OFFLINE);
         checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
-
-        VirtualWorld queueWorld = factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION),
-                Config.IMP.MAIN.WORLD.X,
-                Config.IMP.MAIN.WORLD.Y,
-                Config.IMP.MAIN.WORLD.Z,
-                Config.IMP.MAIN.WORLD.YAW,
-                Config.IMP.MAIN.WORLD.PITCH
-        );
-
-        queueServer = factory.createLimbo(queueWorld)
-                .setName(Config.IMP.MAIN.WORLD.NAME)
-                .setWorldTime(Config.IMP.MAIN.WORLD.WORLD_TIME)
-                .setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
-                .setViewDistance(Config.IMP.MAIN.WORLD.VIEW_DISTANCE)
-                .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATION_DISTANCE);
+        alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
+        
+        queueServer = createQueueServer();
         server.getEventManager().register(this, new QueueListener(this));
 
         {
@@ -176,6 +162,23 @@ public class ReLimboQ {
         return alwaysPutToQueue;
     }
 
+    private Limbo createQueueServer() {
+        return factory.createLimbo(
+                        factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION),
+                                Config.IMP.MAIN.WORLD.X,
+                                Config.IMP.MAIN.WORLD.Y,
+                                Config.IMP.MAIN.WORLD.Z,
+                                Config.IMP.MAIN.WORLD.YAW,
+                                Config.IMP.MAIN.WORLD.PITCH
+                        )
+                )
+                .setName(Config.IMP.MAIN.WORLD.NAME)
+                .setWorldTime(Config.IMP.MAIN.WORLD.WORLD_TIME)
+                .setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
+                .setViewDistance(Config.IMP.MAIN.WORLD.VIEW_DISTANCE)
+                .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATION_DISTANCE);
+    }
+
     public void queuePlayer(Player player) {
         queueServer.spawnPlayer(player, new QueueHandler(this));
     }
@@ -198,7 +201,7 @@ public class ReLimboQ {
                 case NORMAL -> {
                     if (!queuedPlayers.isEmpty()) {
                         LimboPlayer player = queuedPlayers.getFirst();
-                        player.getProxyPlayer().sendMessage(SERIALIZER.deserialize(connectingMessage));
+                        player.getProxyPlayer().sendMessage(connectingMessage);
                         player.disconnect();
                     }
                 }
@@ -208,7 +211,7 @@ public class ReLimboQ {
                             (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(queueMessage, i.incrementAndGet()))));
                 }
                 case OFFLINE ->
-                        queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(serverOfflineMessage)));
+                        queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(serverOfflineMessage));
             }
         }).repeat(checkInterval, TimeUnit.SECONDS).schedule();
     }
