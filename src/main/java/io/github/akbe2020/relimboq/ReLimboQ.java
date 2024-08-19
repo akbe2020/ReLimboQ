@@ -32,7 +32,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import io.github.akbe2020.relimboq.commands.ReLimboQCommand;
+import io.github.akbe2020.relimboq.commands.Reload;
 import io.github.akbe2020.relimboq.handler.QueueHandler;
 import io.github.akbe2020.relimboq.listener.QueueListener;
 import net.elytrium.commons.kyori.serialization.Serializer;
@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Plugin(
-        id = "relimboq",
+        id = ReLimboQ.SLUG,
         name = "ReLimboQ",
         version = "0.1.3",
         authors = {
@@ -70,6 +70,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
 )
 public class ReLimboQ {
+    public static final String SLUG = "relimboq";
     @Inject
     private static Logger LOGGER;
     private static Serializer SERIALIZER;
@@ -152,9 +153,11 @@ public class ReLimboQ {
                 .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATION_DISTANCE);
         this.server.getEventManager().register(this, new QueueListener(this));
 
-        CommandManager manager = this.server.getCommandManager();
-        manager.unregister("relimboq");
-        manager.register("relimboq", new ReLimboQCommand(this), "rlq", "queue");
+        {
+            CommandManager manager = this.server.getCommandManager();
+            manager.unregister(SLUG);
+            manager.register(SLUG, new Reload(this), "rlq", "queue");
+        }
 
         Optional<RegisteredServer> server = this.getServer().getServer(Config.IMP.MAIN.SERVER);
         server.ifPresentOrElse(registeredServer -> {

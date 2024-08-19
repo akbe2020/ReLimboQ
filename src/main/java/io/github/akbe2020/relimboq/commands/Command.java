@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2024 four4tReS
- * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,31 +20,34 @@ package io.github.akbe2020.relimboq.commands;
 import com.google.common.collect.ImmutableList;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.commons.kyori.serialization.Serializer;
-import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
-public class ReLimboQCommand implements SimpleCommand {
+public abstract class Command implements SimpleCommand {
     private final ReLimboQ plugin;
-    private final Component reload;
-    private final Component reloadFailed;
+    private final Serializer serializer;
+    private final String slug;
 
-    public ReLimboQCommand(ReLimboQ plugin) {
+    public Command(ReLimboQ plugin, String slug) {
         this.plugin = plugin;
-        Serializer serializer = ReLimboQ.getSerializer();
-        this.reload = serializer.deserialize(Config.IMP.MESSAGES.RELOAD);
-        this.reloadFailed = serializer.deserialize(Config.IMP.MESSAGES.RELOAD_FAILED);
+        this.serializer = ReLimboQ.getSerializer();
+        this.slug = slug;
+    }
+
+    public ReLimboQ getPlugin() {
+        return plugin;
+    }
+
+    public Serializer getSerializer() {
+        return serializer;
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        String[] args = invocation.arguments();
-
-        if (args.length == 0) {
-            return ImmutableList.of("reload");
+        if (invocation.arguments().length == 0) {
+            return ImmutableList.of(slug);
         }
 
         return ImmutableList.of();
@@ -56,21 +58,12 @@ public class ReLimboQCommand implements SimpleCommand {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
 
-        if (args.length == 1) {
-            String command = args[0];
-            if (command.equals("reload")) {
-                if (!source.hasPermission("relimboq.reload")) {
-                    return;
-                }
-
-                try {
-                    this.plugin.reload();
-                    source.sendMessage(this.reload);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    source.sendMessage(this.reloadFailed);
-                }
-            }
+        if (args.length == 0 || !source.hasPermission(ReLimboQ.SLUG + "." + slug)) {
+            return;
         }
+
+        run(invocation);
     }
+
+    public abstract void run(Invocation invocation);
 }
