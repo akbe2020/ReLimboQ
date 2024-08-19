@@ -23,6 +23,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import io.github.akbe2020.relimboq.Config;
 import io.github.akbe2020.relimboq.ReLimboQ;
+import io.github.akbe2020.relimboq.ServerStatus;
 import net.elytrium.commons.kyori.serialization.Serializer;
 import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
 
@@ -36,7 +37,13 @@ public class QueueListener {
 
     @Subscribe(order = PostOrder.LAST)
     public void onLogin(LoginLimboRegisterEvent event) {
-        if (plugin.isAlwaysPutToQueue()) {
+        if (plugin.queueOnLogin()) {
+            plugin.refreshStatus();
+
+            if (plugin.getServerStatus() == ServerStatus.NORMAL) {
+                return;
+            }
+
             Player player = event.getPlayer();
             event.addOnJoinCallback(() -> plugin.queuePlayer(player));
         }
@@ -44,16 +51,12 @@ public class QueueListener {
 
     @Subscribe
     public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
-        if (plugin.isAlwaysPutToQueue()) {
+        if (!Config.IMP.MAIN.ENABLE_KICK_MESSAGE) {
             return;
         }
 
         event.setOnKickCallback((kickEvent) -> {
-            if (!kickEvent.getServer().equals(plugin.getTargetServer())) {
-                return false;
-            }
-
-            if (kickEvent.getServerKickReason().isEmpty()) {
+            if (!kickEvent.getServer().equals(plugin.getTargetServer()) || kickEvent.getServerKickReason().isEmpty()) {
                 return false;
             }
 
@@ -62,6 +65,7 @@ public class QueueListener {
                 plugin.queuePlayer(kickEvent.getPlayer());
                 return true;
             }
+
             return false;
         });
     }

@@ -134,7 +134,7 @@ public class ReLimboQ {
         connectingMessage = SERIALIZER.deserialize(Config.IMP.MESSAGES.CONNECTING_MESSAGE);
         serverOfflineMessage = SERIALIZER.deserialize(Config.IMP.MESSAGES.SERVER_OFFLINE);
         checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
-        alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
+        alwaysPutToQueue = Config.IMP.MAIN.QUEUE_ON_LOGIN;
         
         queueServer = createQueueServer();
         server.getEventManager().register(this, new QueueListener(this));
@@ -158,7 +158,7 @@ public class ReLimboQ {
         }
     }
 
-    public boolean isAlwaysPutToQueue() {
+    public boolean queueOnLogin() {
         return alwaysPutToQueue;
     }
 
@@ -191,29 +191,39 @@ public class ReLimboQ {
         return targetServer;
     }
 
+    public ServerStatus getServerStatus() {
+        return serverStatus;
+    }
+
+    public void refreshStatus() {
+        ping();
+    }
+
     private void startQueueTask() {
         if (queueTask != null) {
             queueTask.cancel();
         }
 
-        queueTask = getServer().getScheduler().buildTask(this, () -> {
-            switch (serverStatus) {
-                case NORMAL -> {
-                    if (!queuedPlayers.isEmpty()) {
-                        LimboPlayer player = queuedPlayers.getFirst();
-                        player.getProxyPlayer().sendMessage(connectingMessage);
-                        player.disconnect();
-                    }
+        queueTask = getServer().getScheduler().buildTask(this, this::queue).repeat(checkInterval, TimeUnit.SECONDS).schedule();
+    }
+
+    private void queue() {
+        switch (serverStatus) {
+            case NORMAL -> {
+                if (!queuedPlayers.isEmpty()) {
+                    LimboPlayer player = queuedPlayers.getFirst();
+                    player.getProxyPlayer().sendMessage(connectingMessage);
+                    player.disconnect();
                 }
-                case FULL -> {
-                    AtomicInteger i = new AtomicInteger(0);
-                    queuedPlayers.forEach(
-                            (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(queueMessage, i.incrementAndGet()))));
-                }
-                case OFFLINE ->
-                        queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(serverOfflineMessage));
             }
-        }).repeat(checkInterval, TimeUnit.SECONDS).schedule();
+            case FULL -> {
+                AtomicInteger i = new AtomicInteger(0);
+                queuedPlayers.forEach(
+                        (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(queueMessage, i.incrementAndGet()))));
+            }
+            case OFFLINE ->
+                    queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(serverOfflineMessage));
+        }
     }
 
     private void startPingTask() {
@@ -221,32 +231,28 @@ public class ReLimboQ {
             pingTask.cancel();
         }
 
-        pingTask = getServer().getScheduler().buildTask(this, () -> {
-            try {
-                ServerPing serverPing = targetServer.ping().get();
-                if (serverPing.getPlayers().isPresent()) {
-                    ServerPing.Players players = serverPing.getPlayers().get();
-                    if (players.getOnline() >= players.getMax()) {
-                        serverStatus = ServerStatus.FULL;
-                    } else {
-                        serverStatus = ServerStatus.NORMAL;
-                    }
-                }
-            } catch (InterruptedException | ExecutionException ignored) {
-                serverStatus = ServerStatus.OFFLINE;
-            }
-
-            if (exarotonEnabled) {
-                if (exaroton.isOffline()) {
-                    serverStatus = ServerStatus.OFFLINE;
-                }
-            }
-        }).repeat(checkInterval, TimeUnit.SECONDS).schedule();
+        pingTask = getServer().getScheduler().buildTask(this, this::ping).repeat(checkInterval, TimeUnit.SECONDS).schedule();
     }
 
-    enum ServerStatus {
-        NORMAL,
-        FULL,
-        OFFLINE
+    private void ping() {
+        try {
+            ServerPing serverPing = targetServer.ping().get();
+            if (serverPing.getPlayers().isPresent()) {
+                ServerPing.Players players = serverPing.getPlayers().get();
+                if (players.getOnline() >= players.getMax()) {
+                    serverStatus = ServerStatus.FULL;
+                } else {
+                    serverStatus = ServerStatus.NORMAL;
+                }
+            }
+        } catch (InterruptedException | ExecutionException ignored) {
+            serverStatus = ServerStatus.OFFLINE;
+        }
+
+        if (exarotonEnabled) {
+            if (exaroton.isOffline()) {
+                serverStatus = ServerStatus.OFFLINE;
+            }
+        }
     }
 }
