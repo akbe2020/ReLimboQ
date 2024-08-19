@@ -98,9 +98,9 @@ public class ReLimboQ {
         this.server = server;
 
         File dataDirectoryFile = dataDirectory.toFile();
-        this.configFile = new File(dataDirectoryFile, "config.yml");
+        configFile = new File(dataDirectoryFile, "config.yml");
 
-        this.factory = (LimboFactory) this.server.getPluginManager().getPlugin("limboapi").flatMap(PluginContainer::getInstance).orElseThrow();
+        factory = (LimboFactory) this.server.getPluginManager().getPlugin("limboapi").flatMap(PluginContainer::getInstance).orElseThrow();
     }
 
     private static void setLogger(Logger logger) {
@@ -117,11 +117,11 @@ public class ReLimboQ {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) throws APIException {
-        this.reload();
+        reload();
     }
 
     public void reload() throws APIException {
-        Config.IMP.reload(this.configFile);
+        Config.IMP.reload(configFile);
         ComponentSerializer<Component, Component, String> serializer = Serializers.valueOf(Config.IMP.MAIN.SERIALIZER.toUpperCase(Locale.ROOT))
                 .getSerializer();
         if (serializer == null) {
@@ -131,13 +131,13 @@ public class ReLimboQ {
             setSerializer(new Serializer(serializer));
         }
 
-        this.queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
-        this.connectingMessage = Config.IMP.MESSAGES.CONNECTING_MESSAGE;
-        this.alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
-        this.serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
-        this.checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
+        queueMessage = Config.IMP.MESSAGES.QUEUE_MESSAGE;
+        connectingMessage = Config.IMP.MESSAGES.CONNECTING_MESSAGE;
+        alwaysPutToQueue = Config.IMP.MAIN.ALWAYS_PUT_TO_QUEUE;
+        serverOfflineMessage = Config.IMP.MESSAGES.SERVER_OFFLINE;
+        checkInterval = Config.IMP.MAIN.CHECK_INTERVAL;
 
-        VirtualWorld queueWorld = this.factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION),
+        VirtualWorld queueWorld = factory.createVirtualWorld(Dimension.valueOf(Config.IMP.MAIN.WORLD.DIMENSION),
                 Config.IMP.MAIN.WORLD.X,
                 Config.IMP.MAIN.WORLD.Y,
                 Config.IMP.MAIN.WORLD.Z,
@@ -145,29 +145,29 @@ public class ReLimboQ {
                 Config.IMP.MAIN.WORLD.PITCH
         );
 
-        this.queueServer = this.factory.createLimbo(queueWorld)
+        queueServer = factory.createLimbo(queueWorld)
                 .setName(Config.IMP.MAIN.WORLD.NAME)
-                .setWorldTime(Config.IMP.MAIN.WORLD.WORLD_TIME).
-                setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
+                .setWorldTime(Config.IMP.MAIN.WORLD.WORLD_TIME)
+                .setGameMode(GameMode.valueOf(Config.IMP.MAIN.WORLD.GAMEMODE))
                 .setViewDistance(Config.IMP.MAIN.WORLD.VIEW_DISTANCE)
                 .setSimulationDistance(Config.IMP.MAIN.WORLD.SIMULATION_DISTANCE);
-        this.server.getEventManager().register(this, new QueueListener(this));
+        server.getEventManager().register(this, new QueueListener(this));
 
         {
-            CommandManager manager = this.server.getCommandManager();
+            CommandManager manager = server.getCommandManager();
             manager.unregister(SLUG);
             manager.register(SLUG, new Reload(this), "rlq", "queue");
         }
 
-        Optional<RegisteredServer> server = this.getServer().getServer(Config.IMP.MAIN.SERVER);
+        Optional<RegisteredServer> server = getServer().getServer(Config.IMP.MAIN.SERVER);
         server.ifPresentOrElse(registeredServer -> {
-            this.targetServer = registeredServer;
-            this.startPingTask();
-            this.startQueueTask();
-        }, () -> LOGGER.error("Server " + Config.IMP.MAIN.SERVER + " doesn't exists!"));
+            targetServer = registeredServer;
+            startPingTask();
+            startQueueTask();
+        }, () -> LOGGER.error("Server {} doesn't exists!", Config.IMP.MAIN.SERVER));
 
-        this.exarotonEnabled = Config.IMP.EXAROTON.ENABLED;
-        if (this.exarotonEnabled) {
+        exarotonEnabled = Config.IMP.EXAROTON.ENABLED;
+        if (exarotonEnabled) {
             exaroton = new Exaroton(Config.IMP.EXAROTON.TOKEN, Config.IMP.EXAROTON.ADDRESS);
         }
     }
@@ -177,11 +177,11 @@ public class ReLimboQ {
     }
 
     public void queuePlayer(Player player) {
-        this.queueServer.spawnPlayer(player, new QueueHandler(this));
+        queueServer.spawnPlayer(player, new QueueHandler(this));
     }
 
     public ProxyServer getServer() {
-        return this.server;
+        return server;
     }
 
     public RegisteredServer getTargetServer() {
@@ -189,53 +189,55 @@ public class ReLimboQ {
     }
 
     private void startQueueTask() {
-        if (this.queueTask != null) {
-            this.queueTask.cancel();
+        if (queueTask != null) {
+            queueTask.cancel();
         }
-        this.queueTask = this.getServer().getScheduler().buildTask(this, () -> {
-            switch (this.serverStatus) {
+
+        queueTask = getServer().getScheduler().buildTask(this, () -> {
+            switch (serverStatus) {
                 case NORMAL -> {
-                    if (!this.queuedPlayers.isEmpty()) {
-                        LimboPlayer player = this.queuedPlayers.getFirst();
-                        player.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.connectingMessage));
+                    if (!queuedPlayers.isEmpty()) {
+                        LimboPlayer player = queuedPlayers.getFirst();
+                        player.getProxyPlayer().sendMessage(SERIALIZER.deserialize(connectingMessage));
                         player.disconnect();
                     }
                 }
                 case FULL -> {
                     AtomicInteger i = new AtomicInteger(0);
-                    this.queuedPlayers.forEach(
-                            (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(this.queueMessage, i.incrementAndGet()))));
+                    queuedPlayers.forEach(
+                            (p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(MessageFormat.format(queueMessage, i.incrementAndGet()))));
                 }
-                case OFFLINE -> this.queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(this.serverOfflineMessage)));
+                case OFFLINE -> queuedPlayers.forEach((p) -> p.getProxyPlayer().sendMessage(SERIALIZER.deserialize(serverOfflineMessage)));
             }
-        }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
+        }).repeat(checkInterval, TimeUnit.SECONDS).schedule();
     }
 
     private void startPingTask() {
-        if (this.pingTask != null) {
-            this.pingTask.cancel();
+        if (pingTask != null) {
+            pingTask.cancel();
         }
-        this.pingTask = this.getServer().getScheduler().buildTask(this, () -> {
+
+        pingTask = getServer().getScheduler().buildTask(this, () -> {
             try {
-                ServerPing serverPing = this.targetServer.ping().get();
+                ServerPing serverPing = targetServer.ping().get();
                 if (serverPing.getPlayers().isPresent()) {
                     ServerPing.Players players = serverPing.getPlayers().get();
                     if (players.getOnline() >= players.getMax()) {
-                        this.serverStatus = ServerStatus.FULL;
+                        serverStatus = ServerStatus.FULL;
                     } else {
-                        this.serverStatus = ServerStatus.NORMAL;
+                        serverStatus = ServerStatus.NORMAL;
                     }
                 }
             } catch (InterruptedException | ExecutionException ignored) {
-                this.serverStatus = ServerStatus.OFFLINE;
+                serverStatus = ServerStatus.OFFLINE;
             }
 
-            if (this.exarotonEnabled) {
+            if (exarotonEnabled) {
                 if (exaroton.isOffline()) {
-                    this.serverStatus = ServerStatus.OFFLINE;
+                    serverStatus = ServerStatus.OFFLINE;
                 }
             }
-        }).repeat(this.checkInterval, TimeUnit.SECONDS).schedule();
+        }).repeat(checkInterval, TimeUnit.SECONDS).schedule();
     }
 
     enum ServerStatus {

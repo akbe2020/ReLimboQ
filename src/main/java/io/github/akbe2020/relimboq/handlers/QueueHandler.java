@@ -35,11 +35,11 @@ public class QueueHandler implements LimboSessionHandler {
     public void onSpawn(Limbo server, LimboPlayer player) {
         this.player = player;
         this.player.disableFalling();
-        this.plugin.queuedPlayers.add(player);
+        plugin.queuedPlayers.add(player);
     }
 
     @Override
     public void onDisconnect() {
-        this.plugin.queuedPlayers.remove(this.player);
+        plugin.queuedPlayers.remove(player);
     }
 }

@@ -28,7 +28,7 @@ public final class Exaroton {
 
     public Exaroton(String token, String address) throws APIException {
         this.address = address;
-        this.server = bruteforceServerArray(new ExarotonClient(token).getServers());
+        server = bruteforceServerArray(new ExarotonClient(token).getServers());
     }
 
     public boolean isOffline() {

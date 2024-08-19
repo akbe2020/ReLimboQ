@@ -36,20 +36,20 @@ public class QueueListener {
 
     @Subscribe(order = PostOrder.LAST)
     public void onLogin(LoginLimboRegisterEvent event) {
-        if (this.plugin.isAlwaysPutToQueue()) {
+        if (plugin.isAlwaysPutToQueue()) {
             Player player = event.getPlayer();
-            event.addOnJoinCallback(() -> this.plugin.queuePlayer(player));
+            event.addOnJoinCallback(() -> plugin.queuePlayer(player));
         }
     }
 
     @Subscribe
     public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
-        if (this.plugin.isAlwaysPutToQueue()) {
+        if (plugin.isAlwaysPutToQueue()) {
             return;
         }
 
         event.setOnKickCallback((kickEvent) -> {
-            if (!kickEvent.getServer().equals(this.plugin.getTargetServer())) {
+            if (!kickEvent.getServer().equals(plugin.getTargetServer())) {
                 return false;
             }
 
@@ -57,9 +57,9 @@ public class QueueListener {
                 return false;
             }
 
-            String reason = this.serializer.serialize(kickEvent.getServerKickReason().get());
+            String reason = serializer.serialize(kickEvent.getServerKickReason().get());
             if (reason.contains(Config.IMP.MAIN.KICK_MESSAGE)) {
-                this.plugin.queuePlayer(kickEvent.getPlayer());
+                plugin.queuePlayer(kickEvent.getPlayer());
                 return true;
             }
             return false;

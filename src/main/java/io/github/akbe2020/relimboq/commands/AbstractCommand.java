@@ -32,8 +32,8 @@ public abstract class AbstractCommand implements SimpleCommand {
 
     public AbstractCommand(ReLimboQ plugin, String slug) {
         this.plugin = plugin;
-        this.serializer = ReLimboQ.getSerializer();
         this.slug = slug;
+        serializer = ReLimboQ.getSerializer();
     }
 
     public ReLimboQ getPlugin() {
