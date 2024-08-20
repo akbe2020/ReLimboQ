@@ -20,53 +20,31 @@ package io.github.akbe2020.relimboq.listeners;
 
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.proxy.Player;
-import io.github.akbe2020.relimboq.Config;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
+import io.github.akbe2020.relimboq.QueuedPlayer;
 import io.github.akbe2020.relimboq.ReLimboQ;
-import io.github.akbe2020.relimboq.ServerStatus;
-import net.elytrium.commons.kyori.serialization.Serializer;
-import net.elytrium.limboapi.api.event.LoginLimboRegisterEvent;
+import io.github.akbe2020.relimboq.Server;
+import net.elytrium.limboapi.api.player.LimboPlayer;
 
 public class QueueListener {
     private final ReLimboQ plugin;
-    private final Serializer serializer = ReLimboQ.getSerializer();
 
     public QueueListener(ReLimboQ plugin) {
         this.plugin = plugin;
     }
 
     @Subscribe(order = PostOrder.LAST)
-    public void onLogin(LoginLimboRegisterEvent event) {
-        if (plugin.queueOnLogin()) {
-            plugin.refreshStatus();
+    public void onLogin(ServerPreConnectEvent event) {
+        String serverName = event.getOriginalServer().getServerInfo().getName();
 
-            if (plugin.getServerStatus() == ServerStatus.NORMAL) {
-                return;
+        for (Server server : plugin.getServers()) {
+            if (server.getName().equals(serverName)) {
+                if (server.isAvailable()) {
+                    return;
+                }
+
+                plugin.queuePlayer(new QueuedPlayer((LimboPlayer) event.getPlayer(), serverName));
             }
-
-            Player player = event.getPlayer();
-            event.addOnJoinCallback(() -> plugin.queuePlayer(player));
         }
-    }
-
-    @Subscribe
-    public void onLoginLimboRegister(LoginLimboRegisterEvent event) {
-        if (!Config.IMP.MAIN.ENABLE_KICK_MESSAGE) {
-            return;
-        }
-
-        event.setOnKickCallback((kickEvent) -> {
-            if (!kickEvent.getServer().equals(plugin.getTargetServer()) || kickEvent.getServerKickReason().isEmpty()) {
-                return false;
-            }
-
-            String reason = serializer.serialize(kickEvent.getServerKickReason().get());
-            if (reason.contains(Config.IMP.MAIN.KICK_MESSAGE)) {
-                plugin.queuePlayer(kickEvent.getPlayer());
-                return true;
-            }
-
-            return false;
-        });
     }
 }

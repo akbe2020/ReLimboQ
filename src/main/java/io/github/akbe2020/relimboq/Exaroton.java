@@ -22,20 +22,23 @@ import com.exaroton.api.ExarotonClient;
 import com.exaroton.api.server.Server;
 import com.exaroton.api.server.ServerStatus;
 
+import javax.annotation.Nullable;
+
 public final class Exaroton {
     private final Server server;
     private final String address;
 
     public Exaroton(String token, String address) throws APIException {
         this.address = address;
-        server = bruteforceServerArray(new ExarotonClient(token).getServers());
+        server = bruteforceServers(new ExarotonClient(token).getServers());
     }
 
     public boolean isOffline() {
         return !server.hasStatus(ServerStatus.ONLINE);
     }
 
-    private Server bruteforceServerArray(Server[] servers) {
+    @Nullable
+    private Server bruteforceServers(Server[] servers) {
         for (Server server : servers) {
             if (server.getAddress().equals(address)) {
                 return server;

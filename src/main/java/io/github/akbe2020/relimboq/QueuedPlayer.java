@@ -17,8 +17,20 @@
 
 package io.github.akbe2020.relimboq;
 
-public enum ServerStatus {
-    NORMAL,
-    FULL,
-    OFFLINE
+import net.elytrium.limboapi.api.player.LimboPlayer;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+
+public record QueuedPlayer(LimboPlayer limboPlayer, String targetServerName) {
+    @Nullable
+    public static QueuedPlayer bruteforceQueuedPlayer(ArrayList<QueuedPlayer> queuedPlayers, LimboPlayer limboPlayer) {
+        for (QueuedPlayer queuedPlayer : queuedPlayers) {
+            if (queuedPlayer.limboPlayer().equals(limboPlayer)) {
+                return queuedPlayer;
+            }
+        }
+
+        return null;
+    }
 }
