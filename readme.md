@@ -1,5 +1,5 @@
 # ReLimboQ
-
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/akbe2020/ReLimboQ/total?style=for-the-badge&logo=github&label=Github%20Downloads&link=https%3A%2F%2Fgithub.com%2Fakbe2020%2FReLimboQ%2Freleases)
 ![Modrinth Downloads](https://img.shields.io/modrinth/dt/HSl92bnZ?style=for-the-badge&logo=modrinth&label=Modrinth%20Downloads&link=https%3A%2F%2Fmodrinth.com%2Fplugin%2Frelimboq)
 
 ## What is this?
