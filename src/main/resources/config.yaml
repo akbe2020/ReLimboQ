@@ -1,0 +1,38 @@
+# ReLimboQ https://github.com/akbe2020/ReLimboQ config file
+
+
+file-version: 1 # DO NOT TOUCH
+
+serializer: "MINIMESSAGE" # Serializers: LEGACY_AMPERSAND, LEGACY_SECTION, MINIMESSAGE
+ping_interval_ms: 2000 # Server pinging time interval in milliseconds
+
+servers: # Section where your queued server are
+  survival:
+    exaroton: # If the section is present, exaroton integration will function. https://exaroton.com/
+      token: "example-api-token" # Your exaroton api token
+      address: "example.exaroton.me" # Your server's address
+  minigame:
+  anarchy:
+  grief:
+
+limbo: # Virtual Limbo World
+  name: "ReLimboQ" # Limbo name appears in the server brand (f3)
+
+  location: # Your location parameters https://minecraft.wiki/w/Coordinates and https://minecraft.wiki/w/Rotation
+    x: 0
+    y: 100
+    z: 0
+    yaw: 90.0
+    pitch: 0.0
+
+  dimension: "THE_END" # Dimensions: OVERWORLD, NETHER, THE_END
+  world_time: 6000 # DAY - 1000, NOON - 6000, SUNSET - 12000, NIGHT - 13000, MIDNIGHT - 18000, SUNRISE - 23000
+  gamemode: "SPECTATOR" # Gamemodes: SURVIVAL, ADVENTURE, SPECTATOR, CREATIVE
+  render_distance: 2
+  simulation_distance: 2
+
+messages:
+  queue: "Your position in queue: {0}"
+  connecting: "<yellow>Connection to the server..."
+  server_offline: "<red>Server is offline!"
+  reloaded: "<green>ReLimboQ reloaded!"

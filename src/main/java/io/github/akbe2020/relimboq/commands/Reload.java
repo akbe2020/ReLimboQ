@@ -17,7 +17,7 @@
 
 package io.github.akbe2020.relimboq.commands;
 
-import io.github.akbe2020.relimboq.Config;
+import com.exaroton.api.APIException;
 import io.github.akbe2020.relimboq.ReLimboQ;
 import net.elytrium.commons.kyori.serialization.Serializer;
 
@@ -32,10 +32,7 @@ public class Reload extends AbstractCommand {
     public void run(Invocation invocation) {
         try {
             plugin.reload();
-            invocation.source().sendMessage(serializer.deserialize(Config.IMP.MESSAGES.RELOAD));
-        } catch (Exception e) {
-            e.printStackTrace();
-            invocation.source().sendMessage(serializer.deserialize(Config.IMP.MESSAGES.RELOAD_FAILED));
-        }
+            invocation.source().sendMessage(serializer.deserialize(plugin.getConfig().getReloadedMessage()));
+        } catch (APIException ignored) {}
     }
 }

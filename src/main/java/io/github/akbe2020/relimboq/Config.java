@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2024 four4tReS
- * Copyright (C) 2022 - 2023 Elytrium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,75 +17,207 @@
 
 package io.github.akbe2020.relimboq;
 
-import net.elytrium.commons.config.YamlConfig;
+import com.exaroton.api.APIException;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.route.Route;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 
-public class Config extends YamlConfig {
-    @Ignore
-    public static final Config IMP = new Config();
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Set;
 
-    @Create
-    public MAIN MAIN;
-    @Create
-    public MESSAGES MESSAGES;
-    @Create
-    public EXAROTON EXAROTON;
+public class Config {
+    private final ReLimboQ plugin;
+    private YamlDocument document;
 
-    public static class MAIN {
-        @Comment("Serializers: LEGACY_AMPERSAND, LEGACY_SECTION, MINIMESSAGE")
-        public String SERIALIZER = "MINIMESSAGE";
-        @Comment("Server from velocity.toml which will checked for online")
-        public String SERVER = "survival";
-        @Comment("Puts the player in the queue when the player tries to join a full/offline server")
-        public boolean QUEUE_ON_LOGIN = true;
-        public boolean ENABLE_KICK_MESSAGE = false;
-        @Comment("Send player to the queue if kick reason contains this text (like \"The server if full!\")")
-        public String KICK_MESSAGE = "The server is full";
-        @Comment("Server status checking interval in seconds")
-        public int CHECK_INTERVAL = 2;
+    private String serializer;
 
-        @Create
-        public Config.MAIN.WORLD WORLD;
+    public String getSerializer() {
+        return serializer;
+    }
 
-        public static class WORLD {
-            @Comment("The name of Limbo appears on the f3 screen")
-            public String NAME = "ReLimboQ";
+    public int getPingIntervalMs() {
+        return pingIntervalMs;
+    }
 
-            @Comment("Spawn x coordinate")
-            public double X = 0;
-            @Comment("Spawn y coordinate")
-            public double Y = 100;
-            @Comment("Spawn z coordinate")
-            public double Z = 0;
-            @Comment("Spawn rotation (yaw)")
-            public float YAW = 90.0f;
-            @Comment("Spawn rotation (pitch)")
-            public float PITCH = 0.0f;
+    public String getLimboName() {
+        return limboName;
+    }
 
-            @Comment("Dimensions: OVERWORLD, NETHER, THE_END")
-            public String DIMENSION = "OVERWORLD";
-            @Comment("DAY - 1000, NOON - 6000, SUNSET - 12000, NIGHT - 13000, MIDNIGHT - 18000, SUNRISE - 23000")
-            public long WORLD_TIME = 6000;
-            @Comment("Gamemodes: SURVIVAL, ADVENTURE, SPECTATOR, CREATIVE")
-            public String GAMEMODE = "SPECTATOR";
-            public int VIEW_DISTANCE = 2;
-            public int SIMULATION_DISTANCE = 2;
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public String getDimension() {
+        return dimension;
+    }
+
+    public int getWorldTime() {
+        return worldTime;
+    }
+
+    public String getGamemode() {
+        return gamemode;
+    }
+
+    public int getRenderDistance() {
+        return renderDistance;
+    }
+
+    public int getSimulationDistance() {
+        return simulationDistance;
+    }
+
+    public String getQueueMessage() {
+        return queueMessage;
+    }
+
+    public String getConnectingMessage() {
+        return connectingMessage;
+    }
+
+    public String getServerOfflineMessage() {
+        return serverOfflineMessage;
+    }
+
+    public String getReloadedMessage() {
+        return reloadedMessage;
+    }
+
+    private int pingIntervalMs;
+
+    private String limboName;
+    private int x;
+    private int y;
+    private int z;
+    private float yaw;
+    private float pitch;
+
+    private String dimension;
+    private int worldTime;
+    private String gamemode;
+    private int renderDistance;
+    private int simulationDistance;
+
+    private String queueMessage;
+    private String connectingMessage;
+    private String serverOfflineMessage;
+    private String reloadedMessage;
+
+    public Config(ReLimboQ plugin, @DataDirectory Path dataDirectory) {
+        this.plugin = plugin;
+
+        try {
+            document = YamlDocument.create(new File(dataDirectory.toFile(), "config.yaml"),
+                    getClass().getResourceAsStream("config.yaml"),
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings
+                            .builder()
+                            .setAutoUpdate(true)
+                            .build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings
+                            .builder().
+                            setVersioning(new BasicVersioning("file-version"))
+                            .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS)
+                            .build()
+            );
+        } catch (IOException ignored) {
+            loadFailed();
         }
     }
 
-    public static class MESSAGES {
-        public String QUEUE_MESSAGE = "Your position in queue: {0}";
-        public String CONNECTING_MESSAGE = "<yellow>Connecting to the server!";
-        public String SERVER_OFFLINE = "<red>Server is offline!";
-        public String RELOAD = "<green>ReLimboQ reloaded!";
-        public String RELOAD_FAILED = "<red>Reload failed!";
+    public void reload() {
+        try {
+            document.update();
+            document.save();
+            loadFields();
+        } catch (IOException | APIException ignored) {
+            loadFailed();
+        }
     }
 
-    public static class EXAROTON {
-        @Comment("Enables Exaroton hosting integration")
-        public boolean ENABLED = false;
-        @Comment("Your Exaroton API token can be found at: https://exaroton.com/account/")
-        public String TOKEN = "example-api-token";
-        @Comment("Your Exaroton server address can be found on the server page")
-        public String ADDRESS = "example.exaroton.me";
+    private void loadFields() throws APIException {
+        serializer = document.getString("serializer");
+        pingIntervalMs = document.getInt("ping_interval_ms");
+
+        Set<Route> routesSet = document.getSection("servers").getRoutes(false);
+
+        for (Route route: routesSet) {
+            Exaroton exaroton = null;
+
+            if (hasExaroton(document.getSection(route))) {
+                exaroton = new Exaroton(
+                        document.getString(route.add("exaroton.token")),
+                        document.getString(route.add("exaroton.address"))
+                );
+            }
+
+            plugin.addServer(
+                    new Server(ReLimboQ.getProxyServer(),
+                    (String) document.getSection(route).adaptKey(String.class),
+                    exaroton,
+                    plugin.getConfig()
+            ));
+        }
+
+        limboName = document.getString("limbo.name");
+        x = document.getInt("limbo.location.x");
+        y = document.getInt("limbo.location.y");
+        z = document.getInt("limbo.location.z");
+        yaw = document.getFloat("limbo.location.yaw");
+        pitch = document.getFloat("limbo.location.pitch");
+
+        dimension = document.getString("limbo.dimension");
+        worldTime = document.getInt("limbo.world_time");
+        gamemode = document.getString("limbo.gamemode");
+        renderDistance = document.getInt("limbo.render_distance");
+        simulationDistance = document.getInt("limbo.simulation_distance");
+
+        queueMessage = document.getString("limbo.messages.queue");
+        connectingMessage = document.getString("limbo.messages.connecting");
+        serverOfflineMessage = document.getString("limbo.messages.server_offline");
+        reloadedMessage = document.getString("limbo.messages.reloaded");
+    }
+
+    private boolean hasExaroton(Section server) {
+        for (Route route: server.getRoutes(false)) {
+            if (document.getString(route).equals("exaroton")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void loadFailed() {
+        ReLimboQ.getLogger().error("Could not create/load plugin config! The plugin will shut down itself");
+        ReLimboQ.getProxyServer()
+                .getPluginManager()
+                .getPlugin(ReLimboQ.SLUG)
+                .ifPresent(pluginContainer -> pluginContainer.getExecutorService().shutdown());
     }
 }
